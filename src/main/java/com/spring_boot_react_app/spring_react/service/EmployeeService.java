@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 //Calls the repository layer to get entities and processes them to create DTOs for the controller layer.
@@ -29,8 +32,23 @@ public class EmployeeService {
     public Employee getEmployeeById(Long id) {
         //we assign entity the data that is coming from the repository
         EmployeeEntity entity = repository.getReferenceById(id);
-        //then from an entity we convert it to a model so that we can send the employee back to the controller
+        //Convert the entity to a model to send the employee data back to the controller.
         Employee employee = Employee.builder().firstName(entity.getFirstName()).lastName(entity.getLastName()).email(entity.getEmail()).build();
+        return employee;
+    }
+
+    public List<Employee> getAllEmployees() {
+        //I have to convert the entity to a model then send it back to the controller
+        //store the employees in entity
+        List<EmployeeEntity> employeeEntities = repository.findAll();
+        List<Employee> employee = new ArrayList<>();
+        //for every employee in the employeeEntities list
+        for (EmployeeEntity x : employeeEntities) {
+            //now this is where we convert the employees from entity to model
+            Employee allemployees = Employee.builder().firstName(x.getFirstName()).lastName(x.getLastName()).email(x.getEmail()).build();
+            //now add all these employees to the employee list
+            employee.add(allemployees);}
+        //Convert the entity to a model to send the employee data back to the controller.
         return employee;
     }
 }

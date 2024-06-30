@@ -6,6 +6,8 @@ import com.spring_boot_react_app.spring_react.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 //Controller Layer:
 //
 //Handles HTTP requests and responses.
@@ -46,5 +48,10 @@ public class EmployeeController {
         return employee;
     }
 
-
+    //get all emplyees findAll method from service we return Employee back
+    //as we are getting something from the database no need to pass anything to the method
+    @GetMapping("/getAllEmployees")
+    public List<Employee> returnAllEmployees(){
+        return service.getAllEmployees();
+    }
 }
