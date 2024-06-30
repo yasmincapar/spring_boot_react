@@ -4,10 +4,7 @@ package com.spring_boot_react_app.spring_react.controller;
 import com.spring_boot_react_app.spring_react.model.Employee;
 import com.spring_boot_react_app.spring_react.service.EmployeeService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 //Controller Layer:
 //
@@ -32,6 +29,21 @@ public class EmployeeController {
     @PostMapping("/registerEmployee")
     public long registerUser(@RequestBody Employee employee) {
         return service.registerTheEmployee(employee);
+    }
+
+    /**
+     *Using the method below we will get employee
+     * we pass an id then we expect the user to be returned
+     * from here should go to service then we from service should go to repository and fetch the user with that specific id
+     * @PathVariable annotation is used to bind a method parameter to a URI template variable. This allows you to extract values from the URI and use them as parameters in your controller methods
+     * You can use the @PathVariable annotation to capture the employee ID from the URL.
+     * @param
+     * @return
+     */
+    @GetMapping("/getAllEmployee/{id}")
+    public Employee getSingleEmployeeById(@PathVariable Long id){
+        Employee employee = service.getEmployeeById(id);
+        return employee;
     }
 
 

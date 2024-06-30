@@ -24,7 +24,13 @@ public class EmployeeService {
                 employeeEntity = repository.save(employeeEntity);
                 //save method is a built in method provided by the JPA repository used to save an entity to a database.
                 return employeeEntity.getId();
+    }
 
-
+    public Employee getEmployeeById(Long id) {
+        //we assign entity the data that is coming from the repository
+        EmployeeEntity entity = repository.getReferenceById(id);
+        //then from an entity we convert it to a model so that we can send the employee back to the controller
+        Employee employee = Employee.builder().firstName(entity.getFirstName()).lastName(entity.getLastName()).email(entity.getEmail()).build();
+        return employee;
     }
 }

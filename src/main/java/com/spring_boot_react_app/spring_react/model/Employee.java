@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 //The DTO is used to transfer data between different layers of the application, particularly between the controller and service layers. DTOs are not tied to the database schema
 @Data
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class Employee {
     private Long id;
