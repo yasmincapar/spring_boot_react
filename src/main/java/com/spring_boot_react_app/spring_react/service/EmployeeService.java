@@ -1,10 +1,12 @@
 package com.spring_boot_react_app.spring_react.service;
 
 import com.spring_boot_react_app.spring_react.entity.EmployeeEntity;
+import com.spring_boot_react_app.spring_react.exception.EmployeeNotFoundException;
 import com.spring_boot_react_app.spring_react.model.Employee;
 import com.spring_boot_react_app.spring_react.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 //Calls the repository layer to get entities and processes them to create DTOs for the controller layer.
 public class EmployeeService {
     private final EmployeeRepository repository;
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
 
     /**
      * The registerTheEmployee method converts an Employee DTO to an EmployeeEntity, saves it to the database using the save method provided by the JPA repository, and returns the generated ID.
@@ -30,10 +33,20 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(Long id) {
+        logger.info("Fetching employee with ID: {}", id);
         //we assign entity the data that is coming from the repository
-        EmployeeEntity entity = repository.getReferenceById(id);
+        //EmployeeEntity entity = repository.getReferenceById(id);
+        //EmployeeEntity entity = repository.getReferenceById(id);
+        EmployeeEntity entity = repository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("Employee not found with ID: {}", id);
+                    return new EmployeeNotFoundException("The employee doesn't exist with this given ID: " + id);
+                });
+        logger.info("Employee found: {}", entity);
+
         //Convert the entity to a model to send the employee data back to the controller.
         Employee employee = Employee.builder().firstName(entity.getFirstName()).lastName(entity.getLastName()).email(entity.getEmail()).build();
+        logger.info("Returning employee: {}", employee);
         return employee;
     }
 
@@ -50,5 +63,15 @@ public class EmployeeService {
             employee.add(allemployees);}
         //Convert the entity to a model to send the employee data back to the controller.
         return employee;
+    }
+
+    public void deleteEmployeeById(Long id) {
+
+        if(!repository.existsById(id)){
+            logger.info("Employee with this id not found {}",id);
+            throw new EmployeeNotFoundException("The employee doesn't exist with this given ID: " + id);
+        }
+        repository.deleteById(id);
+
     }
 }

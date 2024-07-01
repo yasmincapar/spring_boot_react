@@ -1,11 +1,15 @@
 package com.spring_boot_react_app.spring_react.controller;
 
 
+import com.spring_boot_react_app.spring_react.exception.EmployeeNotFoundException;
 import com.spring_boot_react_app.spring_react.model.Employee;
 import com.spring_boot_react_app.spring_react.service.EmployeeService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 //Controller Layer:
@@ -23,6 +27,10 @@ public class EmployeeController {
     //we need to inject the dependencies
     private EmployeeService service;
 
+    //Used to create a logger instance to understand the internal state of the development process. Prints to the console.
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+
+
     /**
      *
      * @param employee
@@ -39,13 +47,26 @@ public class EmployeeController {
      * from here should go to service then we from service should go to repository and fetch the user with that specific id
      * @PathVariable annotation is used to bind a method parameter to a URI template variable. This allows you to extract values from the URI and use them as parameters in your controller methods
      * You can use the @PathVariable annotation to capture the employee ID from the URL.
+     * A client makes an HTTP GET request to the endpoint /getAllEmployee/{id}.
      * @param
      * @return
      */
     @GetMapping("/getAllEmployee/{id}")
-    public Employee getSingleEmployeeById(@PathVariable Long id){
+    public Employee getSingleEmployeeById(@PathVariable("id") Long id){
         Employee employee = service.getEmployeeById(id);
         return employee;
+    }
+
+
+    /**
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    public ResponseEntity<String> handleResourceNotFoundException(EmployeeNotFoundException ex) {
+        logger.error("Exception caught: ", ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     //get all emplyees findAll method from service we return Employee back
@@ -54,4 +75,18 @@ public class EmployeeController {
     public List<Employee> returnAllEmployees(){
         return service.getAllEmployees();
     }
+
+    //Update
+
+
+    //Delete return the id in which the user has been deleted
+    //we enter the id of which the user we want to delete
+    //we give the id and we can return all the users left or the number of users left
+    @DeleteMapping("/deletEmployee/{id}")
+    public String deleteTheEmployee(@PathVariable("id") Long id){
+        service.deleteEmployeeById(id);
+        return "The Employee has been deleted successfully";
+    }
+
+
 }
