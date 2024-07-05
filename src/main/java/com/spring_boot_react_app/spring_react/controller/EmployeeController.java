@@ -1,6 +1,5 @@
 package com.spring_boot_react_app.spring_react.controller;
-
-
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.spring_boot_react_app.spring_react.exception.EmployeeNotFoundException;
 import com.spring_boot_react_app.spring_react.model.Employee;
 import com.spring_boot_react_app.spring_react.service.EmployeeService;
@@ -20,6 +19,8 @@ import java.util.List;
 
 //Now we have annotated our class with @REStController now it becomes possible for this class to handle HTTP request and responses
 @RestController
+//@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 @AllArgsConstructor
 //this allows you to define a base url
 @RequestMapping("/employees")
@@ -77,11 +78,20 @@ public class EmployeeController {
     }
 
     //Update
+    //fetch the employee with a specified id then update and save
+    @PutMapping("/updateEmployees/{id}")
+    public Employee updateEmployee(@PathVariable("id") Long id, @RequestBody Employee employee) {
+        Employee updatedEmployee = service.updateTheEmployeeById(id, employee);
+        return updatedEmployee;
+    }
+
 
 
     //Delete return the id in which the user has been deleted
     //we enter the id of which the user we want to delete
     //we give the id and we can return all the users left or the number of users left
+    //The client makes an HTTP Delete request to the endpoint /getAllEmployee/{id}.
+
     @DeleteMapping("/deletEmployee/{id}")
     public String deleteTheEmployee(@PathVariable("id") Long id){
         service.deleteEmployeeById(id);

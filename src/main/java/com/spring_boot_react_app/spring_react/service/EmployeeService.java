@@ -74,4 +74,31 @@ public class EmployeeService {
         repository.deleteById(id);
 
     }
+
+    public Employee updateTheEmployeeById(Long id, Employee employee) {
+        EmployeeEntity entity = repository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("Employee not found with ID: {}", id);
+                    return new EmployeeNotFoundException("The employee doesn't exist with this given ID: " + id);
+                });
+
+        // Update the entity fields with the new values
+        entity.setFirstName(employee.getFirstName());
+        entity.setLastName(employee.getLastName());
+        entity.setEmail(employee.getEmail());
+
+        // Save the updated entity back to the repository
+        EmployeeEntity updatedEntity = repository.save(entity);
+        logger.info("Updated employee: {}", updatedEntity);
+
+        // Convert the updated entity back to a model to return
+        Employee updatedEmployee = Employee.builder()
+                .firstName(updatedEntity.getFirstName())
+                .lastName(updatedEntity.getLastName())
+                .email(updatedEntity.getEmail())
+                .build();
+
+        return updatedEmployee;
+    }
+
 }
